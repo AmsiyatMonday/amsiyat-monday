@@ -45,3 +45,21 @@ window.onload = ()=>{
         document.body.classList.add("light");
     }
 };
+
+const menuBtn=document.getElementById("menuBtn");
+
+const sidebar=document.getElementById("sidebar");
+
+const closeMenu=document.getElementById("closeMenu");
+
+menuBtn.onclick=function(){
+
+sidebar.classList.add("open");
+
+}
+
+closeMenu.onclick=function(){
+
+sidebar.classList.remove("open");
+
+}
