@@ -1,15 +1,12 @@
 (() => {
   const STORAGE_KEY = "amsiyat_local_chapters_v1";
   const WORKER_URL = "https://amsiyatmonday.alyaaalareeqi.workers.dev";
-  const el = (id) => document.getElementById(id);
 
-  window.addEventListener("error", (e) => {
-    console.error(e.error || e.message);
-  });
-
-  window.addEventListener("unhandledrejection", (e) => {
-    console.error(e.reason);
-  });
+  const $ = (id) => document.getElementById(id);
+  const uuid = () =>
+    (crypto && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : `id_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 
   const state = {
     editingId: null,
@@ -21,40 +18,47 @@
   };
 
   const fields = {
-    title: el("title"),
-    number: el("number"),
-    description: el("description"),
-    status: el("status"),
-    tag: el("tag"),
-    cover: el("cover"),
-    pdf: el("pdf"),
+    title: $("title"),
+    number: $("number"),
+    description: $("description"),
+    status: $("status"),
+    tag: $("tag"),
+    cover: $("cover"),
+    pdf: $("pdf"),
   };
 
   const ui = {
-    statChapters: el("statChapters"),
-    statLast: el("statLast"),
-    statStatus: el("statStatus"),
-    statFile: el("statFile"),
-    coverName: el("coverName"),
-    pdfName: el("pdfName"),
-    previewTitle: el("previewTitle"),
-    previewMeta: el("previewMeta"),
-    infoTitle: el("infoTitle"),
-    infoNumber: el("infoNumber"),
-    infoStatus: el("infoStatus"),
-    infoTag: el("infoTag"),
-    coverPreview: el("coverPreview"),
-    pdfFrame: el("pdfFrame"),
-    chapterList: el("chapterList"),
-    previewModal: el("previewModal"),
-    modalTitle: el("modalTitle"),
-    modalMeta: el("modalMeta"),
-    modalCover: el("modalCover"),
-    modalChapterTitle: el("modalChapterTitle"),
-    modalChapterSub: el("modalChapterSub"),
-    modalChapterDesc: el("modalChapterDesc"),
-    modalChapterNum: el("modalChapterNum"),
-    modalChapterTag: el("modalChapterTag"),
+    statChapters: $("statChapters"),
+    statLast: $("statLast"),
+    statStatus: $("statStatus"),
+    statFile: $("statFile"),
+    coverName: $("coverName"),
+    pdfName: $("pdfName"),
+    previewTitle: $("previewTitle"),
+    previewMeta: $("previewMeta"),
+    infoTitle: $("infoTitle"),
+    infoNumber: $("infoNumber"),
+    infoStatus: $("infoStatus"),
+    infoTag: $("infoTag"),
+    coverPreview: $("coverPreview"),
+    pdfFrame: $("pdfFrame"),
+    chapterList: $("chapterList"),
+    previewModal: $("previewModal"),
+    modalTitle: $("modalTitle"),
+    modalMeta: $("modalMeta"),
+    modalCover: $("modalCover"),
+    modalChapterTitle: $("modalChapterTitle"),
+    modalChapterSub: $("modalChapterSub"),
+    modalChapterDesc: $("modalChapterDesc"),
+    modalChapterNum: $("modalChapterNum"),
+    modalChapterTag: $("modalChapterTag"),
+    btnSave: $("btnSave"),
+    btnSaveAndPreview: $("btnSaveAndPreview"),
+    btnPreview: $("btnPreview"),
+    btnPublishRemote: $("btnPublishRemote"),
+    btnClearAll: $("btnClearAll"),
+    btnCloseModal: $("btnCloseModal"),
+    btnSaveFromPreview: $("btnSaveFromPreview"),
   };
 
   function loadChapters() {
@@ -85,15 +89,32 @@
       .replaceAll("'", "&#39;");
   }
 
+  function readForm() {
+    return {
+      id: state.editingId || uuid(),
+      title: fields.title.value.trim(),
+      number: fields.number.value.trim(),
+      description: fields.description.value.trim(),
+      status: fields.status.value,
+      tag: fields.tag.value.trim(),
+      coverName: state.coverName || "",
+      pdfName: state.pdfName || "",
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
   function fillPreview() {
     const title = fields.title.value.trim() || "أمسية الاثنين";
     const number = fields.number.value.trim() || "—";
-    const description = fields.description.value.trim() || "اكتبي بيانات الفصل لترينها هنا مباشرة";
+    const description =
+      fields.description.value.trim() ||
+      "اكتبي بيانات الفصل لترينها هنا مباشرة";
     const status = statusLabel(fields.status.value);
     const tag = fields.tag.value.trim() || "—";
 
     ui.previewTitle.textContent = title;
     ui.previewMeta.textContent = description;
+
     ui.infoTitle.textContent = title;
     ui.infoNumber.textContent = number;
     ui.infoStatus.textContent = status;
@@ -102,10 +123,12 @@
     ui.modalTitle.textContent = title;
     ui.modalMeta.textContent = `${status} • الفصل ${number}`;
     ui.modalChapterTitle.textContent = title;
-    ui.modalChapterSub.textContent = fields.description.value.trim() || "لا يوجد وصف بعد";
+    ui.modalChapterSub.textContent =
+      fields.description.value.trim() || "لا يوجد وصف بعد";
     ui.modalChapterDesc.textContent = description;
     ui.modalChapterNum.textContent = `رقم الفصل: ${number}`;
-    ui.modalChapterTag.textContent = tag === "—" ? "لا يوجد وسم" : `الوسم: ${tag}`;
+    ui.modalChapterTag.textContent =
+      tag === "—" ? "لا يوجد وسم" : `الوسم: ${tag}`;
 
     ui.statStatus.textContent = status;
   }
@@ -126,14 +149,19 @@
     ui.chapterList.innerHTML = state.chapters
       .slice()
       .sort((a, b) => Number(a.number) - Number(b.number))
-      .map((ch) => `
+      .map(
+        (ch) => `
         <article class="chapter-item">
           <div class="top">
             <div>
-              <h3>${escapeHtml(ch.number ? `الفصل ${ch.number}` : "فصل بدون رقم")} — ${escapeHtml(ch.title)}</h3>
+              <h3>${escapeHtml(
+                ch.number ? `الفصل ${ch.number}` : "فصل بدون رقم"
+              )} — ${escapeHtml(ch.title)}</h3>
               <p>${escapeHtml(ch.description || "لا يوجد وصف")}</p>
             </div>
-            <span style="color:var(--gold);font-weight:700;">${statusLabel(ch.status)}</span>
+            <span style="color:var(--gold);font-weight:700;">${statusLabel(
+              ch.status
+            )}</span>
           </div>
           <div class="actions-row">
             <button class="mini" data-edit="${ch.id}">تعديل</button>
@@ -141,14 +169,18 @@
             <button class="mini" data-delete="${ch.id}">حذف</button>
           </div>
         </article>
-      `).join("");
+      `
+      )
+      .join("");
 
     ui.chapterList.querySelectorAll("[data-edit]").forEach((btn) => {
       btn.addEventListener("click", () => editChapter(btn.dataset.edit));
     });
+
     ui.chapterList.querySelectorAll("[data-preview]").forEach((btn) => {
       btn.addEventListener("click", () => previewChapter(btn.dataset.preview));
     });
+
     ui.chapterList.querySelectorAll("[data-delete]").forEach((btn) => {
       btn.addEventListener("click", () => deleteChapter(btn.dataset.delete));
     });
@@ -165,62 +197,4 @@
 
   function syncPdfPreview(file) {
     if (!file) return;
-    if (state.pdfUrl) URL.revokeObjectURL(state.pdfUrl);
-    state.pdfUrl = URL.createObjectURL(file);
-    ui.pdfFrame.src = state.pdfUrl;
-  }
-
-  function resetForm() {
-    state.editingId = null;
-    fields.title.value = "";
-    fields.number.value = "";
-    fields.description.value = "";
-    fields.status.value = "draft";
-    fields.tag.value = "";
-    state.coverName = "";
-    state.pdfName = "";
-    fields.cover.value = "";
-    fields.pdf.value = "";
-    if (state.coverUrl) URL.revokeObjectURL(state.coverUrl);
-    if (state.pdfUrl) URL.revokeObjectURL(state.pdfUrl);
-    state.coverUrl = "";
-    state.pdfUrl = "";
-    ui.coverPreview.removeAttribute("src");
-    ui.coverPreview.style.display = "none";
-    ui.pdfFrame.removeAttribute("src");
-    ui.coverName.textContent = "لا توجد صورة مختارة";
-    ui.pdfName.textContent = "لا يوجد ملف مختار";
-    fillPreview();
-    updateStats();
-  }
-
-  function loadIntoForm(ch) {
-    state.editingId = ch.id;
-    fields.title.value = ch.title || "";
-    fields.number.value = ch.number || "";
-    fields.description.value = ch.description || "";
-    fields.status.value = ch.status || "draft";
-    fields.tag.value = ch.tag || "";
-    state.coverName = ch.coverName || "";
-    state.pdfName = ch.pdfName || "";
-    ui.coverName.textContent = state.coverName || "لا توجد صورة مختارة";
-    ui.pdfName.textContent = state.pdfName || "لا يوجد ملف مختار";
-    fillPreview();
-    updateStats();
-  }
-
-  function saveCurrent() {
-    const item = {
-      id: state.editingId || crypto.randomUUID(),
-      title: fields.title.value.trim(),
-      number: fields.number.value.trim(),
-      description: fields.description.value.trim(),
-      status: fields.status.value,
-      tag: fields.tag.value.trim(),
-      coverName: state.coverName || "",
-      pdfName: state.pdfName || "",
-      updatedAt: new Date().toISOString(),
-    };
-
-    if (!item.title) return alert("اكتبي عنوان الفصل");
-    if (!
+    if (
