@@ -174,34 +174,21 @@ font-size:20px;
 }
 
 .sidebar{
-    .sidebar{
 display:flex;
 flex-direction:column;
 gap:8px;
-    }
 
 position:fixed;
-
 top:0;
-
 right:-300px;
-
 width:300px;
-
 height:100%;
-
 background:#111;
-
 transition:.35s;
-
 padding:25px;
-
 z-index:9999;
-
 overflow:auto;
-
 box-shadow:-5px 0 20px rgba(0,0,0,.5);
-
 }
 
 .sidebar.open{
