@@ -76,3 +76,9 @@ accordion.addEventListener("click", () => {
     }
 
 });
+const accordion = document.querySelector(".accordion");
+const submenu = document.querySelector(".submenu");
+
+accordion.addEventListener("click", () => {
+    submenu.classList.toggle("show");
+});
