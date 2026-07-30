@@ -1,1 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>أمسية الاثنين</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:'Cairo',sans-serif;
+
+background:
+linear-gradient(180deg,#090909,#140b18,#090909);
+
+height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+overflow:hidden;
+
+color:white;
+
+}
+
+.container{
+
+text-align:center;
+
+animation:fade 1.4s;
+
+}
+
+h1{
+
+font-size:58px;
+
+color:#d7b15c;
+
+margin-bottom:15px;
+
+letter-spacing:2px;
+
+}
+
+.subtitle{
+
+font-size:20px;
+
+color:#cccccc;
+
+margin-bottom:60px;
+
+}
+
+button{
+
+background:#5e1023;
+
+color:white;
+
+border:none;
+
+padding:18px 55px;
+
+font-size:22px;
+
+border-radius:50px;
+
+cursor:pointer;
+
+transition:.35s;
+
+}
+
+button:hover{
+
+background:#8a1a35;
+
+transform:scale(1.05);
+
+}
+
+.footer{
+
+position:absolute;
+
+bottom:25px;
+
+width:100%;
+
+text-align:center;
+
+font-size:14px;
+
+opacity:.45;
+
+}
+
+@keyframes fade{
+
+from{
+
+opacity:0;
+
+transform:translateY(40px);
+
+}
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>أمسية الاثنين</h1>
+
+<div class="subtitle">
+
+رواية غموض وتحقيق
+
+</div>
+
+<button onclick="alert('قريبًا سيبدأ الفصل الأول')">
+
+ابدأ القراءة
+
+</button>
+
+</div>
+
+<div class="footer">
+
+© Amsiyat Monday
+
+</div>
+
+</body>
+
+</html>
