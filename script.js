@@ -64,9 +64,6 @@ sidebar.classList.remove("open");
 
 }
 
-const accordion = document.querySelector(".accordion");
-const submenu = document.querySelector(".submenu");
-
 accordion.addEventListener("click", () => {
 
     if(submenu.style.display === "block"){
