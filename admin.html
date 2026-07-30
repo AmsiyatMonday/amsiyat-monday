@@ -651,7 +651,73 @@
     </div>
   </div>
 
+  const WORKER_URL = "https://amsiyatmonday.alyaaalareeqi.workers.dev";
 <script>
+  async function publishRemote() {
+  const title = fields.title.value.trim();
+  const number = fields.number.value.trim();
+  const description = fields.description.value.trim();
+  const status = fields.status.value;
+  const tag = fields.tag.value.trim();
+  const pdf = fields.pdf.files?.[0];
+  const cover = fields.cover.files?.[0];
+
+  if (!title) return alert("اكتبي عنوان الفصل");
+  if (!number) return alert("اكتبي رقم الفصل");
+  if (!pdf) return alert("اختاري ملف PDF");
+
+  const form = new FormData();
+  form.append("title", title);
+  form.append("number", number);
+  form.append("description", description);
+  form.append("status", status);
+  form.append("tag", tag);
+  form.append("pdf", pdf);
+  if (cover) form.append("cover", cover);
+
+  const oldText = el("btnPublish").textContent;
+  el("btnPublish").disabled = true;
+  el("btnPublish").textContent = "جارٍ النشر...";
+
+  try {
+    const res = await fetch(WORKER_URL, {
+      method: "POST",
+      body: form,
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || "فشل النشر");
+    }
+
+    const item = {
+      id: state.editingId || crypto.randomUUID(),
+      title,
+      number,
+      description,
+      status,
+      tag,
+      coverName: cover?.name || state.coverName || "",
+      pdfName: pdf.name,
+      updatedAt: new Date().toISOString(),
+    };
+
+    const idx = state.chapters.findIndex((x) => String(x.number) === String(number));
+    if (idx >= 0) state.chapters[idx] = item;
+    else state.chapters.push(item);
+
+    state.editingId = item.id;
+    saveChapters();
+
+    alert("تم النشر إلى GitHub بنجاح");
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    el("btnPublish").disabled = false;
+    el("btnPublish").textContent = oldText;
+  }
+  }
 (() => {
   const STORAGE_KEY = "amsiyat_local_chapters_v1";
   const COVER_URL_KEY = "amsiyat_cover_url";
