@@ -1,5 +1,5 @@
 // حفظ آخر صفحة
-let currentPage = localStorage.getItem("page") || 1;
+let currentPage = Number(localStorage.getItem("page")) || 1;
 
 function savePage(page){
     currentPage = page;
@@ -38,34 +38,43 @@ function toggleTheme(){
     }
 }
 
-window.onload = ()=>{
+window.onload = function(){
+
     loadPage();
 
-    if(localStorage.getItem("theme")=="light"){
+    if(localStorage.getItem("theme") === "light"){
         document.body.classList.add("light");
     }
+
 };
 
+// القائمة الجانبية
 const menuBtn = document.getElementById("menuBtn");
 const sidebar = document.getElementById("sidebar");
 const closeMenu = document.getElementById("closeMenu");
 
-if (menuBtn && sidebar) {
-    menuBtn.addEventListener("click", () => {
+if(menuBtn){
+    menuBtn.addEventListener("click", function(){
         sidebar.classList.add("open");
     });
 }
 
-if (closeMenu && sidebar) {
-    closeMenu.addEventListener("click", () => {
+if(closeMenu){
+    closeMenu.addEventListener("click", function(){
         sidebar.classList.remove("open");
     });
 }
 
+// القائمة المنسدلة للفصول
 const accordion = document.querySelector(".accordion");
 const submenu = document.querySelector(".submenu");
 
-if (accordion && submenu) {
-    accordion.addEventListener("click", () => {
+if(accordion && submenu){
+
+    accordion.addEventListener("click", function(){
+
         submenu.classList.toggle("show");
+
     });
+
+}
