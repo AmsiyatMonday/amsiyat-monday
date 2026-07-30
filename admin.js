@@ -1,6 +1,6 @@
-const saveBtn = document.getElementById("save");
+const previewBtn = document.getElementById("preview");
 
-saveBtn.onclick = () => {
+previewBtn.onclick = () => {
 
     const title = document.getElementById("title").value;
     const chapter = document.getElementById("chapter").value;
@@ -21,17 +21,9 @@ saveBtn.onclick = () => {
         return;
     }
 
-    alert(
-`تم تجهيز الفصل.
+    localStorage.setItem("previewTitle", title);
+    localStorage.setItem("previewChapter", chapter);
 
-العنوان:
-${title}
-
-رقم الفصل:
-${chapter}
-
-الملف:
-${pdf.name}`
-    );
+    window.location.href = "preview.html";
 
 };
