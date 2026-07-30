@@ -1,149 +1,226 @@
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Content-Type": "application/json; charset=utf-8",
-};
+(() => {
+  const STORAGE_KEY = "amsiyat_local_chapters_v1";
+  const WORKER_URL = "https://amsiyatmonday.alyaaalareeqi.workers.dev";
+  const el = (id) => document.getElementById(id);
 
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data, null, 2), {
-    status,
-    headers: corsHeaders,
-  });
-}
-
-function bytesToBase64(bytes) {
-  let binary = "";
-  const chunkSize = 0x8000;
-
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-
-  return btoa(binary);
-}
-
-function extFrom(name, fallback = ".jpg") {
-  const match = String(name).match(/\.[a-zA-Z0-9]+$/);
-  return match ? match[0].toLowerCase() : fallback;
-}
-
-async function githubGetFile(path, env) {
-  const url = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/${path}`;
-
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
-      Accept: "application/vnd.github+json",
-      "User-Agent": "Amsiyat-Monday",
-    },
+  window.addEventListener("error", (e) => {
+    console.error(e.error || e.message);
   });
 
-  if (res.status === 404) return null;
+  window.addEventListener("unhandledrejection", (e) => {
+    console.error(e.reason);
+  });
 
-  if (!res.ok) {
-    throw new Error(`GitHub GET failed (${res.status}): ${await res.text()}`);
-  }
-
-  return res.json();
-}
-
-async function upsertFile(path, bytes, message, env) {
-  const existing = await githubGetFile(path, env);
-  const url = `https://api.github.com/repos/${env.GITHUB_OWNER}/${env.GITHUB_REPO}/contents/${path}`;
-
-  const body = {
-    message,
-    content: bytesToBase64(bytes),
+  const state = {
+    editingId: null,
+    coverUrl: "",
+    pdfUrl: "",
+    coverName: "",
+    pdfName: "",
+    chapters: loadChapters(),
   };
 
-  if (existing?.sha) {
-    body.sha = existing.sha;
-  }
+  const fields = {
+    title: el("title"),
+    number: el("number"),
+    description: el("description"),
+    status: el("status"),
+    tag: el("tag"),
+    cover: el("cover"),
+    pdf: el("pdf"),
+  };
 
-  const res = await fetch(url, {
-    method: "PUT",
-    headers: {
-      Authorization: `Bearer ${env.GITHUB_TOKEN}`,
-      Accept: "application/vnd.github+json",
-      "Content-Type": "application/json",
-      "User-Agent": "Amsiyat-Monday",
-    },
-    body: JSON.stringify(body),
-  });
+  const ui = {
+    statChapters: el("statChapters"),
+    statLast: el("statLast"),
+    statStatus: el("statStatus"),
+    statFile: el("statFile"),
+    coverName: el("coverName"),
+    pdfName: el("pdfName"),
+    previewTitle: el("previewTitle"),
+    previewMeta: el("previewMeta"),
+    infoTitle: el("infoTitle"),
+    infoNumber: el("infoNumber"),
+    infoStatus: el("infoStatus"),
+    infoTag: el("infoTag"),
+    coverPreview: el("coverPreview"),
+    pdfFrame: el("pdfFrame"),
+    chapterList: el("chapterList"),
+    previewModal: el("previewModal"),
+    modalTitle: el("modalTitle"),
+    modalMeta: el("modalMeta"),
+    modalCover: el("modalCover"),
+    modalChapterTitle: el("modalChapterTitle"),
+    modalChapterSub: el("modalChapterSub"),
+    modalChapterDesc: el("modalChapterDesc"),
+    modalChapterNum: el("modalChapterNum"),
+    modalChapterTag: el("modalChapterTag"),
+  };
 
-  const text = await res.text();
-
-  if (!res.ok) {
-    throw new Error(`GitHub PUT failed (${res.status}): ${text}`);
-  }
-
-  return JSON.parse(text);
-}
-
-async function loadChapters(env) {
-  const file = await githubGetFile("data/chapters.json", env);
-  if (!file?.download_url) return [];
-
-  const res = await fetch(file.download_url);
-  if (!res.ok) return [];
-
-  const data = await res.json();
-  return Array.isArray(data) ? data : [];
-}
-
-export default {
-  async fetch(request, env) {
-    if (request.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: corsHeaders });
-    }
-
-    if (request.method === "GET") {
-      return json({
-        success: true,
-        message: "Amsiyat Monday Worker is running",
-      });
-    }
-
-    if (request.method !== "POST") {
-      return json(
-        {
-          success: false,
-          error: "Method not allowed",
-        },
-        405
-      );
-    }
-
+  function loadChapters() {
     try {
-      const form = await request.formData();
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
 
-      const title = String(form.get("title") || "").trim();
-      const number = String(form.get("number") || "").trim();
-      const description = String(form.get("description") || "").trim();
-      const status = String(form.get("status") || "draft").trim();
-      const tag = String(form.get("tag") || "").trim();
+  function saveChapters() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.chapters));
+    renderList();
+    updateStats();
+  }
 
-      const pdfFile = form.get("pdf");
-      const coverFile = form.get("cover");
+  function statusLabel(v) {
+    return v === "published" ? "منشور" : "مسودة";
+  }
 
-      if (!title) throw new Error("عنوان الفصل مطلوب");
-      if (!number) throw new Error("رقم الفصل مطلوب");
-      if (!(pdfFile instanceof File)) throw new Error("ملف PDF مطلوب");
+  function escapeHtml(s) {
+    return String(s)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+  }
 
-      const padded = number.padStart(3, "0");
-      const pdfPath = `chapters/chapter-${padded}.pdf`;
+  function fillPreview() {
+    const title = fields.title.value.trim() || "أمسية الاثنين";
+    const number = fields.number.value.trim() || "—";
+    const description = fields.description.value.trim() || "اكتبي بيانات الفصل لترينها هنا مباشرة";
+    const status = statusLabel(fields.status.value);
+    const tag = fields.tag.value.trim() || "—";
 
-      const pdfBytes = new Uint8Array(await pdfFile.arrayBuffer());
-      await upsertFile(pdfPath, pdfBytes, `Add PDF for chapter ${number}: ${title}`, env);
+    ui.previewTitle.textContent = title;
+    ui.previewMeta.textContent = description;
+    ui.infoTitle.textContent = title;
+    ui.infoNumber.textContent = number;
+    ui.infoStatus.textContent = status;
+    ui.infoTag.textContent = tag;
 
-      let coverPath = "";
-      if (coverFile instanceof File) {
-        coverPath = `covers/chapter-${padded}${extFrom(coverFile.name, ".jpg")}`;
-        const coverBytes = new Uint8Array(await coverFile.arrayBuffer());
-        await upsertFile(coverPath, coverBytes, `Add cover for chapter ${number}: ${title}`, env);
-      }
+    ui.modalTitle.textContent = title;
+    ui.modalMeta.textContent = `${status} • الفصل ${number}`;
+    ui.modalChapterTitle.textContent = title;
+    ui.modalChapterSub.textContent = fields.description.value.trim() || "لا يوجد وصف بعد";
+    ui.modalChapterDesc.textContent = description;
+    ui.modalChapterNum.textContent = `رقم الفصل: ${number}`;
+    ui.modalChapterTag.textContent = tag === "—" ? "لا يوجد وسم" : `الوسم: ${tag}`;
 
-      const chapters = await loadChapters(env);
+    ui.statStatus.textContent = status;
+  }
 
-      const record = {
+  function updateStats() {
+    ui.statChapters.textContent = state.chapters.length;
+    const last = state.chapters[state.chapters.length - 1];
+    ui.statLast.textContent = last ? `${last.number || "?"} - ${last.title}` : "—";
+    ui.statFile.textContent = state.pdfName || "لا يوجد";
+  }
+
+  function renderList() {
+    if (!state.chapters.length) {
+      ui.chapterList.innerHTML = `<div class="empty">لا توجد فصول محفوظة بعد.</div>`;
+      return;
+    }
+
+    ui.chapterList.innerHTML = state.chapters
+      .slice()
+      .sort((a, b) => Number(a.number) - Number(b.number))
+      .map((ch) => `
+        <article class="chapter-item">
+          <div class="top">
+            <div>
+              <h3>${escapeHtml(ch.number ? `الفصل ${ch.number}` : "فصل بدون رقم")} — ${escapeHtml(ch.title)}</h3>
+              <p>${escapeHtml(ch.description || "لا يوجد وصف")}</p>
+            </div>
+            <span style="color:var(--gold);font-weight:700;">${statusLabel(ch.status)}</span>
+          </div>
+          <div class="actions-row">
+            <button class="mini" data-edit="${ch.id}">تعديل</button>
+            <button class="mini" data-preview="${ch.id}">معاينة</button>
+            <button class="mini" data-delete="${ch.id}">حذف</button>
+          </div>
+        </article>
+      `).join("");
+
+    ui.chapterList.querySelectorAll("[data-edit]").forEach((btn) => {
+      btn.addEventListener("click", () => editChapter(btn.dataset.edit));
+    });
+    ui.chapterList.querySelectorAll("[data-preview]").forEach((btn) => {
+      btn.addEventListener("click", () => previewChapter(btn.dataset.preview));
+    });
+    ui.chapterList.querySelectorAll("[data-delete]").forEach((btn) => {
+      btn.addEventListener("click", () => deleteChapter(btn.dataset.delete));
+    });
+  }
+
+  function syncCoverPreview(file) {
+    if (!file) return;
+    if (state.coverUrl) URL.revokeObjectURL(state.coverUrl);
+    state.coverUrl = URL.createObjectURL(file);
+    ui.coverPreview.src = state.coverUrl;
+    ui.coverPreview.style.display = "block";
+    ui.modalCover.src = state.coverUrl;
+  }
+
+  function syncPdfPreview(file) {
+    if (!file) return;
+    if (state.pdfUrl) URL.revokeObjectURL(state.pdfUrl);
+    state.pdfUrl = URL.createObjectURL(file);
+    ui.pdfFrame.src = state.pdfUrl;
+  }
+
+  function resetForm() {
+    state.editingId = null;
+    fields.title.value = "";
+    fields.number.value = "";
+    fields.description.value = "";
+    fields.status.value = "draft";
+    fields.tag.value = "";
+    state.coverName = "";
+    state.pdfName = "";
+    fields.cover.value = "";
+    fields.pdf.value = "";
+    if (state.coverUrl) URL.revokeObjectURL(state.coverUrl);
+    if (state.pdfUrl) URL.revokeObjectURL(state.pdfUrl);
+    state.coverUrl = "";
+    state.pdfUrl = "";
+    ui.coverPreview.removeAttribute("src");
+    ui.coverPreview.style.display = "none";
+    ui.pdfFrame.removeAttribute("src");
+    ui.coverName.textContent = "لا توجد صورة مختارة";
+    ui.pdfName.textContent = "لا يوجد ملف مختار";
+    fillPreview();
+    updateStats();
+  }
+
+  function loadIntoForm(ch) {
+    state.editingId = ch.id;
+    fields.title.value = ch.title || "";
+    fields.number.value = ch.number || "";
+    fields.description.value = ch.description || "";
+    fields.status.value = ch.status || "draft";
+    fields.tag.value = ch.tag || "";
+    state.coverName = ch.coverName || "";
+    state.pdfName = ch.pdfName || "";
+    ui.coverName.textContent = state.coverName || "لا توجد صورة مختارة";
+    ui.pdfName.textContent = state.pdfName || "لا يوجد ملف مختار";
+    fillPreview();
+    updateStats();
+  }
+
+  function saveCurrent() {
+    const item = {
+      id: state.editingId || crypto.randomUUID(),
+      title: fields.title.value.trim(),
+      number: fields.number.value.trim(),
+      description: fields.description.value.trim(),
+      status: fields.status.value,
+      tag: fields.tag.value.trim(),
+      coverName: state.coverName || "",
+      pdfName: state.pdfName || "",
+      updatedAt: new Date().toISOString(),
+    };
+
+    if (!item.title) return alert("اكتبي عنوان الفصل");
+    if (!
