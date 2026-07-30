@@ -63,3 +63,16 @@ closeMenu.onclick=function(){
 sidebar.classList.remove("open");
 
 }
+
+const accordion = document.querySelector(".accordion");
+const submenu = document.querySelector(".submenu");
+
+accordion.addEventListener("click", () => {
+
+    if(submenu.style.display === "block"){
+        submenu.style.display = "none";
+    }else{
+        submenu.style.display = "block";
+    }
+
+});
