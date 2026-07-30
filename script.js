@@ -46,36 +46,26 @@ window.onload = ()=>{
     }
 };
 
-const menuBtn=document.getElementById("menuBtn");
+const menuBtn = document.getElementById("menuBtn");
+const sidebar = document.getElementById("sidebar");
+const closeMenu = document.getElementById("closeMenu");
 
-const sidebar=document.getElementById("sidebar");
-
-const closeMenu=document.getElementById("closeMenu");
-
-menuBtn.onclick=function(){
-
-sidebar.classList.add("open");
-
+if (menuBtn && sidebar) {
+    menuBtn.addEventListener("click", () => {
+        sidebar.classList.add("open");
+    });
 }
 
-closeMenu.onclick=function(){
-
-sidebar.classList.remove("open");
-
+if (closeMenu && sidebar) {
+    closeMenu.addEventListener("click", () => {
+        sidebar.classList.remove("open");
+    });
 }
 
-accordion.addEventListener("click", () => {
-
-    if(submenu.style.display === "block"){
-        submenu.style.display = "none";
-    }else{
-        submenu.style.display = "block";
-    }
-
-});
 const accordion = document.querySelector(".accordion");
 const submenu = document.querySelector(".submenu");
 
-accordion.addEventListener("click", () => {
-    submenu.classList.toggle("show");
-});
+if (accordion && submenu) {
+    accordion.addEventListener("click", () => {
+        submenu.classList.toggle("show");
+    });
