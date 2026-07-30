@@ -352,3 +352,35 @@ margin:25px auto;
 border-radius:12px;
 cursor:pointer;
 }
+
+.accordion{
+    width:100%;
+    background:none;
+    border:none;
+    color:white;
+    font-size:22px;
+    text-align:right;
+    padding:14px;
+    cursor:pointer;
+    border-radius:10px;
+    font-family:"Cairo",sans-serif;
+}
+
+.accordion:hover{
+    background:#222;
+}
+
+.submenu{
+    display:none;
+    padding-right:20px;
+}
+
+.submenu.show{
+    display:block;
+}
+
+.submenu a{
+    display:block;
+    font-size:18px;
+    margin:6px 0;
+}
