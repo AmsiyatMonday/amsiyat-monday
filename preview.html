@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>معاينة الفصل</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+.preview{
+
+max-width:1100px;
+
+margin:40px auto;
+
+padding:30px;
+
+}
+
+.preview h1{
+
+color:#d4b06a;
+
+font-size:38px;
+
+margin-bottom:10px;
+
+}
+
+.preview h2{
+
+color:white;
+
+margin-bottom:30px;
+
+}
+
+.viewer{
+
+height:75vh;
+
+background:#111;
+
+border-radius:18px;
+
+overflow:hidden;
+
+box-shadow:0 0 30px rgba(0,0,0,.4);
+
+}
+
+.viewer iframe{
+
+width:100%;
+
+height:100%;
+
+border:none;
+
+}
+
+.buttons{
+
+margin-top:25px;
+
+display:flex;
+
+justify-content:space-between;
+
+}
+
+.buttons button{
+
+padding:15px 30px;
+
+font-size:18px;
+
+border:none;
+
+border-radius:12px;
+
+cursor:pointer;
+
+}
+
+.back{
+
+background:#444;
+
+color:white;
+
+}
+
+.publish{
+
+background:#65152b;
+
+color:white;
+
+}
+
+.publish:hover{
+
+background:#8d2140;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="preview">
+
+<h1 id="chapterTitle"></h1>
+
+<h2 id="chapterNumber"></h2>
+
+<div class="viewer">
+
+<iframe id="pdfViewer"></iframe>
+
+</div>
+
+<div class="buttons">
+
+<button class="back" onclick="history.back()">
+رجوع
+</button>
+
+<button class="publish">
+نشر الفصل
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+document.getElementById("chapterTitle").innerText =
+localStorage.getItem("
