@@ -4,17 +4,18 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>لوحة المؤلفة | أمسية الاثنين</title>
+
 <style>
   :root{
     --bg:#090909;
     --panel:#121212;
-    --panel-2:#171717;
-    --line:#2a2a2a;
-    --text:#f6f4ef;
-    --muted:#b6b0a8;
+    --panel2:#171717;
+    --line:#292929;
+    --text:#f7f3ee;
+    --muted:#b8b1a8;
     --gold:#d4b06a;
     --red:#7c2037;
-    --red-2:#a52a4d;
+    --red2:#a52a4d;
     --shadow:0 20px 50px rgba(0,0,0,.35);
     --radius:22px;
   }
@@ -28,16 +29,10 @@
     color:var(--text);
     min-height:100vh;
   }
-  a{color:inherit;text-decoration:none}
-  button,input,textarea,select{
-    font:inherit;
-  }
-
   .shell{
     width:min(1400px, calc(100% - 24px));
     margin:16px auto 28px;
   }
-
   .topbar{
     display:flex;
     align-items:center;
@@ -46,24 +41,18 @@
     padding:16px 18px;
     background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
     border:1px solid rgba(255,255,255,.06);
-    border-radius:calc(var(--radius) + 4px);
+    border-radius:26px;
     box-shadow:var(--shadow);
     backdrop-filter: blur(12px);
-  }
-  .brand{
-    display:flex;
-    flex-direction:column;
-    gap:4px;
   }
   .brand .kicker{
     font-size:.8rem;
     letter-spacing:.16em;
     color:var(--gold);
-    text-transform:uppercase;
   }
   .brand h1{
-    margin:0;
-    font-size:clamp(1.35rem, 2vw, 2rem);
+    margin:4px 0 2px;
+    font-size:clamp(1.3rem, 2vw, 1.95rem);
     line-height:1.2;
   }
   .brand p{
@@ -76,22 +65,23 @@
     gap:10px;
     flex-wrap:wrap;
   }
-  .chip-btn{
+  .chip-btn,.action-btn,.mini,.file-btn{
     border:none;
+    cursor:pointer;
+    transition:.2s ease;
+  }
+  .chip-btn{
     border-radius:999px;
     padding:10px 14px;
-    cursor:pointer;
     background:rgba(255,255,255,.05);
     color:var(--text);
     border:1px solid rgba(255,255,255,.08);
-    transition:.2s ease;
   }
   .chip-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.08)}
   .chip-btn.primary{
-    background:linear-gradient(90deg, var(--red), var(--red-2));
+    background:linear-gradient(90deg, var(--red), var(--red2));
     border-color:transparent;
   }
-
   .stats{
     display:grid;
     grid-template-columns:repeat(4,minmax(0,1fr));
@@ -106,15 +96,13 @@
     box-shadow:var(--shadow);
   }
   .stat .label{color:var(--muted);font-size:.92rem}
-  .stat .value{font-size:1.6rem;font-weight:700;margin-top:4px;color:var(--gold)}
-
+  .stat .value{font-size:1.55rem;font-weight:700;margin-top:4px;color:var(--gold)}
   .grid{
     display:grid;
-    grid-template-columns: 1.1fr .9fr;
+    grid-template-columns:1.1fr .9fr;
     gap:14px;
     margin-top:14px;
   }
-
   .card{
     background:rgba(255,255,255,.03);
     border:1px solid rgba(255,255,255,.06);
@@ -130,31 +118,17 @@
     justify-content:space-between;
     gap:10px;
   }
-  .card-hd h2{
-    margin:0;
-    font-size:1.05rem;
-  }
-  .card-hd span{
-    color:var(--muted);
-    font-size:.9rem;
-  }
+  .card-hd h2{margin:0;font-size:1.05rem}
+  .card-hd span{color:var(--muted);font-size:.9rem}
   .card-bd{padding:18px}
-
   .form{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:14px;
   }
-  .field{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-  }
+  .field{display:flex;flex-direction:column;gap:8px}
   .field.full{grid-column:1 / -1}
-  .field label{
-    color:var(--muted);
-    font-size:.95rem;
-  }
+  .field label{color:var(--muted);font-size:.95rem}
   .field input[type="text"],
   .field input[type="number"],
   .field textarea,
@@ -166,24 +140,18 @@
     background:var(--panel);
     border:1px solid rgba(255,255,255,.08);
     border-radius:16px;
-    padding:14px 14px;
-    transition:.2s ease;
+    padding:14px;
   }
-  .field textarea{
-    min-height:130px;
-    resize:vertical;
-  }
-  .field input:focus,
-  .field textarea:focus,
-  .field select:focus{
+  .field textarea{min-height:130px;resize:vertical}
+  .field input:focus,.field textarea:focus,.field select:focus{
     border-color:rgba(212,176,106,.55);
     box-shadow:0 0 0 4px rgba(212,176,106,.08);
   }
-
   .upload-row{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:14px;
+    margin-top:14px;
   }
   .drop{
     border:1px dashed rgba(212,176,106,.35);
@@ -196,40 +164,21 @@
     gap:10px;
     justify-content:space-between;
   }
-  .drop h3{
-    margin:0;
-    font-size:1rem;
-    color:var(--gold);
-  }
-  .drop p{
-    margin:0;
-    color:var(--muted);
-    font-size:.92rem;
-    line-height:1.8;
-  }
-  .drop input{
-    display:none;
-  }
+  .drop h3{margin:0;font-size:1rem;color:var(--gold)}
+  .drop p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.8}
+  .drop input{display:none}
   .file-btn{
     display:inline-flex;
     align-items:center;
     justify-content:center;
     gap:8px;
-    border:none;
     border-radius:14px;
     padding:12px 14px;
     background:rgba(255,255,255,.07);
     color:var(--text);
-    cursor:pointer;
-    transition:.2s ease;
   }
   .file-btn:hover{background:rgba(255,255,255,.11)}
-  .file-name{
-    color:var(--muted);
-    font-size:.9rem;
-    word-break:break-word;
-  }
-
+  .file-name{color:var(--muted);font-size:.9rem;word-break:break-word}
   .actions{
     display:flex;
     gap:10px;
@@ -237,38 +186,19 @@
     margin-top:16px;
   }
   .action-btn{
-    border:none;
     border-radius:16px;
     padding:13px 16px;
-    cursor:pointer;
     color:var(--text);
     background:rgba(255,255,255,.06);
     border:1px solid rgba(255,255,255,.08);
-    transition:.2s ease;
   }
   .action-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.1)}
-  .action-btn.primary{
-    background:linear-gradient(90deg, var(--red), var(--red-2));
-    border-color:transparent;
-  }
-  .action-btn.gold{
-    background:linear-gradient(90deg, #8f6a2e, var(--gold));
-    color:#111;
-    border-color:transparent;
-    font-weight:700;
-  }
-  .action-btn.danger{
-    background:linear-gradient(90deg, #4d1422, #7c2037);
-    border-color:transparent;
-  }
-
-  .preview-wrap{
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-  }
+  .action-btn.primary{background:linear-gradient(90deg,var(--red),var(--red2));border-color:transparent}
+  .action-btn.gold{background:linear-gradient(90deg,#8f6a2e,var(--gold));color:#111;border-color:transparent;font-weight:700}
+  .action-btn.danger{background:linear-gradient(90deg,#4d1422,#7c2037);border-color:transparent}
+  .preview-wrap{display:flex;flex-direction:column;gap:14px}
   .preview-card{
-    background:var(--panel-2);
+    background:var(--panel2);
     border-radius:20px;
     border:1px solid rgba(255,255,255,.06);
     overflow:hidden;
@@ -300,15 +230,8 @@
     flex-direction:column;
     gap:8px;
   }
-  .preview-cover .cover-fallback .title{
-    font-size:1.5rem;
-    font-weight:700;
-    color:var(--gold);
-  }
-  .preview-cover .cover-fallback .meta{
-    color:#f0ece3;
-    opacity:.9;
-  }
+  .preview-cover .cover-fallback .title{font-size:1.5rem;font-weight:700;color:var(--gold)}
+  .preview-cover .cover-fallback .meta{color:#f0ece3;opacity:.9}
   .preview-info{
     padding:16px 18px;
     display:grid;
@@ -321,21 +244,14 @@
     color:var(--muted);
     font-size:.95rem;
   }
-  .info-line strong{
-    color:var(--text);
-    font-weight:600;
-  }
-
+  .info-line strong{color:var(--text);font-weight:600}
   .pdf-frame{
     width:100%;
     height:420px;
     border:0;
     background:#111;
   }
-
-  .chapters{
-    margin-top:14px;
-  }
+  .chapters{margin-top:14px}
   .chapter-grid{
     display:grid;
     gap:12px;
@@ -356,31 +272,15 @@
     gap:10px;
     align-items:flex-start;
   }
-  .chapter-item h3{
-    margin:0;
-    font-size:1.02rem;
-  }
-  .chapter-item p{
-    margin:0;
-    color:var(--muted);
-    font-size:.92rem;
-    line-height:1.75;
-  }
-  .chapter-item .actions-row{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-    margin-top:2px;
-  }
+  .chapter-item h3{margin:0;font-size:1.02rem}
+  .chapter-item p{margin:0;color:var(--muted);font-size:.92rem;line-height:1.75}
+  .chapter-item .actions-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
   .mini{
-    border:none;
     border-radius:12px;
     padding:9px 12px;
-    cursor:pointer;
     background:rgba(255,255,255,.07);
     color:var(--text);
   }
-
   .empty{
     color:var(--muted);
     padding:16px;
@@ -388,7 +288,6 @@
     border:1px dashed rgba(255,255,255,.12);
     border-radius:18px;
   }
-
   .modal{
     position:fixed;
     inset:0;
@@ -421,7 +320,7 @@
   .modal-body{
     padding:18px;
     display:grid;
-    grid-template-columns: .85fr 1.15fr;
+    grid-template-columns:.85fr 1.15fr;
     gap:14px;
   }
   .book-skin{
@@ -463,25 +362,22 @@
     border-top:1px solid rgba(0,0,0,.08);
     padding-top:14px;
   }
-
   .hint{
     color:var(--muted);
     font-size:.92rem;
     line-height:1.8;
   }
-
-  @media (max-width: 1080px){
+  @media (max-width:1080px){
     .grid,.modal-body{grid-template-columns:1fr}
     .chapter-grid{grid-template-columns:1fr}
     .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
   }
-  @media (max-width: 720px){
+  @media (max-width:720px){
     .shell{width:min(100% - 14px, 100%)}
-    .topbar{padding:14px}
+    .topbar{padding:14px;flex-direction:column;align-items:stretch}
+    .top-actions{justify-content:flex-start}
     .form,.upload-row{grid-template-columns:1fr}
     .stats{grid-template-columns:1fr}
-    .topbar{flex-direction:column;align-items:stretch}
-    .top-actions{justify-content:flex-start}
     .pdf-frame{height:320px}
     .book-page{min-height:auto}
   }
@@ -497,7 +393,7 @@
       </div>
       <div class="top-actions">
         <button class="chip-btn" id="btnClearAll">تفريغ الحقول</button>
-        <button class="chip-btn primary" id="btnNewPreview">معاينة الفصل</button>
+        <button class="chip-btn primary" id="btnPreview">معاينة الفصل</button>
       </div>
     </section>
 
@@ -512,7 +408,7 @@
       <div class="card">
         <div class="card-hd">
           <h2>بيانات الفصل</h2>
-          <span>املئي الحقول ثم احفظي النسخة المحلية أو افتحي المعاينة</span>
+          <span>املئي الحقول ثم احفظي النسخة المحلية</span>
         </div>
         <div class="card-bd">
           <div class="form">
@@ -545,7 +441,7 @@
             </div>
           </div>
 
-          <div class="upload-row" style="margin-top:14px;">
+          <div class="upload-row">
             <div class="drop">
               <h3>صورة الغلاف</h3>
               <p>اختاري صورة مناسبة للفصل. ستظهر في المعاينة وفي بطاقة الفصل.</p>
@@ -564,13 +460,12 @@
           </div>
 
           <div class="actions">
-            <button class="action-btn primary" id="btnPreview">معاينة</button>
-            <button class="action-btn gold" id="btnSave">حفظ محلي</button>
-            <button class="action-btn danger" id="btnPublish">نشر محلي</button>
+            <button class="action-btn primary" id="btnSave">حفظ محلي</button>
+            <button class="action-btn gold" id="btnSaveAndPreview">حفظ وفتح المعاينة</button>
           </div>
 
           <p class="hint" style="margin-top:14px;">
-            هذه النسخة تحفظ الفصول داخل المتصفح مؤقتًا لتجهيز الهيكل. بعد ذلك نربط زر النشر بالـ Worker حتى يصبح الرفع من الجوال مباشرًا.
+            هذه النسخة نظيفة: اختيار PDF يعمل، المعاينة تعمل، والتخزين المحلي يعمل. بعد أن نثبتها نضيف زر النشر الخارجي بدون خلط.
           </p>
         </div>
       </div>
@@ -607,7 +502,7 @@
     <section class="card chapters">
       <div class="card-hd">
         <h2>الفصول المحفوظة محليًا</h2>
-        <span>تعديل / حذف / تحميل من جديد</span>
+        <span>تعديل / معاينة / حذف</span>
       </div>
       <div class="card-bd">
         <div class="chapter-grid" id="chapterList">
@@ -651,420 +546,6 @@
     </div>
   </div>
 
-  const WORKER_URL = "https://amsiyatmonday.alyaaalareeqi.workers.dev";
-<script>
-  async function publishRemote() {
-  const title = fields.title.value.trim();
-  const number = fields.number.value.trim();
-  const description = fields.description.value.trim();
-  const status = fields.status.value;
-  const tag = fields.tag.value.trim();
-  const pdf = fields.pdf.files?.[0];
-  const cover = fields.cover.files?.[0];
-
-  if (!title) return alert("اكتبي عنوان الفصل");
-  if (!number) return alert("اكتبي رقم الفصل");
-  if (!pdf) return alert("اختاري ملف PDF");
-
-  const form = new FormData();
-  form.append("title", title);
-  form.append("number", number);
-  form.append("description", description);
-  form.append("status", status);
-  form.append("tag", tag);
-  form.append("pdf", pdf);
-  if (cover) form.append("cover", cover);
-
-  const oldText = el("btnPublish").textContent;
-  el("btnPublish").disabled = true;
-  el("btnPublish").textContent = "جارٍ النشر...";
-
-  try {
-    const res = await fetch(WORKER_URL, {
-      method: "POST",
-      body: form,
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-      throw new Error(data.error || "فشل النشر");
-    }
-
-    const item = {
-      id: state.editingId || crypto.randomUUID(),
-      title,
-      number,
-      description,
-      status,
-      tag,
-      coverName: cover?.name || state.coverName || "",
-      pdfName: pdf.name,
-      updatedAt: new Date().toISOString(),
-    };
-
-    const idx = state.chapters.findIndex((x) => String(x.number) === String(number));
-    if (idx >= 0) state.chapters[idx] = item;
-    else state.chapters.push(item);
-
-    state.editingId = item.id;
-    saveChapters();
-
-    alert("تم النشر إلى GitHub بنجاح");
-  } catch (err) {
-    alert(err.message);
-  } finally {
-    el("btnPublish").disabled = false;
-    el("btnPublish").textContent = oldText;
-  }
-  }
-(() => {
-  const STORAGE_KEY = "amsiyat_local_chapters_v1";
-  const COVER_URL_KEY = "amsiyat_cover_url";
-  const PDF_URL_KEY = "amsiyat_pdf_url";
-
-  const el = (id) => document.getElementById(id);
-
-  const state = {
-    editingId: null,
-    coverUrl: "",
-    pdfUrl: "",
-    coverName: "",
-    pdfName: "",
-    chapters: loadChapters(),
-  };
-
-  const fields = {
-    title: el("title"),
-    number: el("number"),
-    description: el("description"),
-    status: el("status"),
-    tag: el("tag"),
-    cover: el("cover"),
-    pdf: el("pdf"),
-  };
-
-  const ui = {
-    statChapters: el("statChapters"),
-    statLast: el("statLast"),
-    statStatus: el("statStatus"),
-    statFile: el("statFile"),
-
-    coverName: el("coverName"),
-    pdfName: el("pdfName"),
-
-    previewTitle: el("previewTitle"),
-    previewMeta: el("previewMeta"),
-    infoTitle: el("infoTitle"),
-    infoNumber: el("infoNumber"),
-    infoStatus: el("infoStatus"),
-    infoTag: el("infoTag"),
-    coverPreview: el("coverPreview"),
-    pdfFrame: el("pdfFrame"),
-
-    chapterList: el("chapterList"),
-
-    previewModal: el("previewModal"),
-    modalTitle: el("modalTitle"),
-    modalMeta: el("modalMeta"),
-    modalCover: el("modalCover"),
-    modalChapterTitle: el("modalChapterTitle"),
-    modalChapterSub: el("modalChapterSub"),
-    modalChapterDesc: el("modalChapterDesc"),
-    modalChapterNum: el("modalChapterNum"),
-    modalChapterTag: el("modalChapterTag"),
-  };
-
-  function loadChapters() {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  function saveChapters() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.chapters));
-    renderList();
-    updateStats();
-  }
-
-  function statusLabel(v) {
-    return v === "published" ? "منشور" : "مسودة";
-  }
-
-  function clearFiles() {
-    if (state.coverUrl) URL.revokeObjectURL(state.coverUrl);
-    if (state.pdfUrl) URL.revokeObjectURL(state.pdfUrl);
-    state.coverUrl = "";
-    state.pdfUrl = "";
-    state.coverName = "";
-    state.pdfName = "";
-    fields.cover.value = "";
-    fields.pdf.value = "";
-    ui.coverName.textContent = "لا توجد صورة مختارة";
-    ui.pdfName.textContent = "لا يوجد ملف مختار";
-    ui.coverPreview.removeAttribute("src");
-    ui.coverPreview.style.display = "none";
-    ui.pdfFrame.removeAttribute("src");
-    localStorage.removeItem(COVER_URL_KEY);
-    localStorage.removeItem(PDF_URL_KEY);
-  }
-
-  function readForm() {
-    return {
-      id: state.editingId || crypto.randomUUID(),
-      title: fields.title.value.trim(),
-      number: fields.number.value.trim(),
-      description: fields.description.value.trim(),
-      status: fields.status.value,
-      tag: fields.tag.value.trim(),
-      coverName: state.coverName || "",
-      pdfName: state.pdfName || "",
-      updatedAt: new Date().toISOString(),
-    };
-  }
-
-  function fillPreview() {
-    const title = fields.title.value.trim() || "أمسية الاثنين";
-    const number = fields.number.value.trim() || "—";
-    const description = fields.description.value.trim() || "اكتبي بيانات الفصل لترينها هنا مباشرة";
-    const status = statusLabel(fields.status.value);
-    const tag = fields.tag.value.trim() || "—";
-
-    ui.previewTitle.textContent = title;
-    ui.previewMeta.textContent = description;
-    ui.infoTitle.textContent = title;
-    ui.infoNumber.textContent = number;
-    ui.infoStatus.textContent = status;
-    ui.infoTag.textContent = tag;
-
-    ui.modalTitle.textContent = title;
-    ui.modalMeta.textContent = `${status} • الفصل ${number}`;
-    ui.modalChapterTitle.textContent = title;
-    ui.modalChapterSub.textContent = fields.description.value.trim() || "لا يوجد وصف بعد";
-    ui.modalChapterDesc.textContent = description;
-    ui.modalChapterNum.textContent = `رقم الفصل: ${number}`;
-    ui.modalChapterTag.textContent = tag === "—" ? "لا يوجد وسم" : `الوسم: ${tag}`;
-    ui.statStatus.textContent = status;
-  }
-
-  function updateStats() {
-    ui.statChapters.textContent = state.chapters.length;
-    const last = state.chapters[state.chapters.length - 1];
-    ui.statLast.textContent = last ? `${last.number || "?"} - ${last.title}` : "—";
-    ui.statFile.textContent = state.pdfName || "لا يوجد";
-  }
-
-  function renderList() {
-    if (!state.chapters.length) {
-      ui.chapterList.innerHTML = `<div class="empty">لا توجد فصول محفوظة بعد.</div>`;
-      return;
-    }
-
-    ui.chapterList.innerHTML = state.chapters
-      .slice()
-      .sort((a,b) => Number(a.number) - Number(b.number))
-      .map(ch => `
-        <article class="chapter-item">
-          <div class="top">
-            <div>
-              <h3>${escapeHtml(ch.number ? `الفصل ${ch.number}` : "فصل بدون رقم")} — ${escapeHtml(ch.title)}</h3>
-              <p>${escapeHtml(ch.description || "لا يوجد وصف")}</p>
-            </div>
-            <span style="color:var(--gold);font-weight:700;">${statusLabel(ch.status)}</span>
-          </div>
-          <div class="actions-row">
-            <button class="mini" data-edit="${ch.id}">تعديل</button>
-            <button class="mini" data-preview="${ch.id}">معاينة</button>
-            <button class="mini" data-delete="${ch.id}">حذف</button>
-          </div>
-        </article>
-      `).join("");
-
-    ui.chapterList.querySelectorAll("[data-edit]").forEach(btn => {
-      btn.addEventListener("click", () => editChapter(btn.dataset.edit));
-    });
-    ui.chapterList.querySelectorAll("[data-preview]").forEach(btn => {
-      btn.addEventListener("click", () => previewChapter(btn.dataset.preview));
-    });
-    ui.chapterList.querySelectorAll("[data-delete]").forEach(btn => {
-      btn.addEventListener("click", () => deleteChapter(btn.dataset.delete));
-    });
-  }
-
-  function escapeHtml(s) {
-    return String(s)
-      .replaceAll("&","&amp;")
-      .replaceAll("<","&lt;")
-      .replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;")
-      .replaceAll("'","&#39;");
-  }
-
-  function syncCoverPreview(file) {
-    if (!file) return;
-    if (state.coverUrl) URL.revokeObjectURL(state.coverUrl);
-    state.coverUrl = URL.createObjectURL(file);
-    ui.coverPreview.src = state.coverUrl;
-    ui.coverPreview.style.display = "block";
-    ui.modalCover.src = state.coverUrl;
-    localStorage.setItem(COVER_URL_KEY, state.coverUrl);
-  }
-
-  function syncPdfPreview(file) {
-    if (!file) return;
-    if (state.pdfUrl) URL.revokeObjectURL(state.pdfUrl);
-    state.pdfUrl = URL.createObjectURL(file);
-    ui.pdfFrame.src = state.pdfUrl;
-    localStorage.setItem(PDF_URL_KEY, state.pdfUrl);
-  }
-
-  function loadIntoForm(ch) {
-    state.editingId = ch.id;
-    fields.title.value = ch.title || "";
-    fields.number.value = ch.number || "";
-    fields.description.value = ch.description || "";
-    fields.status.value = ch.status || "draft";
-    fields.tag.value = ch.tag || "";
-
-    state.coverName = ch.coverName || "";
-    state.pdfName = ch.pdfName || "";
-    ui.coverName.textContent = state.coverName || "لا توجد صورة مختارة";
-    ui.pdfName.textContent = state.pdfName || "لا يوجد ملف مختار";
-
-    fillPreview();
-    updateStats();
-  }
-
-  function resetForm() {
-    state.editingId = null;
-    fields.title.value = "";
-    fields.number.value = "";
-    fields.description.value = "";
-    fields.status.value = "draft";
-    fields.tag.value = "";
-    clearFiles();
-    fillPreview();
-  }
-
-  function saveCurrent() {
-    const item = readForm();
-    if (!item.title) return alert("اكتبي عنوان الفصل");
-    if (!item.number) return alert("اكتبي رقم الفصل");
-    if (!state.pdfName) return alert("اختاري ملف PDF");
-    if (state.editingId) {
-      const index = state.chapters.findIndex(x => x.id === state.editingId);
-      if (index !== -1) state.chapters[index] = { ...state.chapters[index], ...item };
-    } else {
-      state.chapters.push(item);
-      state.editingId = item.id;
-    }
-    saveChapters();
-    alert("تم الحفظ محليًا");
-  }
-
-  function previewSave() {
-    const item = readForm();
-    if (!item.title) return alert("اكتبي عنوان الفصل");
-    if (!item.number) return alert("اكتبي رقم الفصل");
-    if (!state.pdfName) return alert("اختاري ملف PDF");
-    fillPreview();
-    ui.previewModal.classList.add("open");
-    ui.previewModal.setAttribute("aria-hidden", "false");
-  }
-
-  function previewChapter(id) {
-    const ch = state.chapters.find(x => x.id === id);
-    if (!ch) return;
-    fields.title.value = ch.title || "";
-    fields.number.value = ch.number || "";
-    fields.description.value = ch.description || "";
-    fields.status.value = ch.status || "draft";
-    fields.tag.value = ch.tag || "";
-    state.coverName = ch.coverName || "";
-    state.pdfName = ch.pdfName || "";
-    ui.coverName.textContent = state.coverName || "لا توجد صورة مختارة";
-    ui.pdfName.textContent = state.pdfName || "لا يوجد ملف مختار";
-    fillPreview();
-    ui.previewModal.classList.add("open");
-    ui.previewModal.setAttribute("aria-hidden", "false");
-  }
-
-  function editChapter(id) {
-    const ch = state.chapters.find(x => x.id === id);
-    if (!ch) return;
-    loadIntoForm(ch);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  function deleteChapter(id) {
-    const ch = state.chapters.find(x => x.id === id);
-    if (!ch) return;
-    if (!confirm(`حذف ${ch.title}؟`)) return;
-    state.chapters = state.chapters.filter(x => x.id !== id);
-    if (state.editingId === id) resetForm();
-    saveChapters();
-  }
-
-  // Events
-  ["input","change"].forEach(evt => {
-    Object.values(fields).forEach(field => {
-      field.addEventListener(evt, () => {
-        if (field === fields.cover || field === fields.pdf) return;
-        fillPreview();
-      });
-    });
-  });
-
-  fields.cover.addEventListener("change", () => {
-    const file = fields.cover.files?.[0];
-    if (!file) return;
-    state.coverName = file.name;
-    ui.coverName.textContent = file.name;
-    syncCoverPreview(file);
-    fillPreview();
-  });
-
-  fields.pdf.addEventListener("change", () => {
-    const file = fields.pdf.files?.[0];
-    if (!file) return;
-    state.pdfName = file.name;
-    ui.pdfName.textContent = file.name;
-    syncPdfPreview(file);
-    fillPreview();
-  });
-
-  el("btnSave").addEventListener("click", saveCurrent);
-  el("btnPublish").addEventListener("click", publishRemote);
-  el("btnPreview").addEventListener("click", previewSave);
-  el("btnNewPreview").addEventListener("click", previewSave);
-  el("btnCloseModal").addEventListener("click", () => {
-    ui.previewModal.classList.remove("open");
-    ui.previewModal.setAttribute("aria-hidden", "true");
-  });
-  el("btnSaveFromPreview").addEventListener("click", () => {
-    saveCurrent();
-    ui.previewModal.classList.remove("open");
-    ui.previewModal.setAttribute("aria-hidden", "true");
-  });
-  el("btnClearAll").addEventListener("click", () => {
-    if (!confirm("تفريغ الحقول الحالية؟")) return;
-    resetForm();
-  });
-  ui.previewModal.addEventListener("click", (e) => {
-    if (e.target === ui.previewModal) {
-      ui.previewModal.classList.remove("open");
-      ui.previewModal.setAttribute("aria-hidden", "true");
-    }
-  });
-
-  // Init
-  renderList();
-  updateStats();
-  fillPreview();
-})();
-</script>
+  <script src="admin.js"></script>
 </body>
-              </html>
+</html>
