@@ -18,32 +18,19 @@ box-sizing:border-box;
 }
 
 body{
-
 font-family:'Cairo',sans-serif;
-
-background:
-linear-gradient(180deg,#090909,#140b18,#090909);
-
+background:linear-gradient(180deg,#090909,#140b18,#090909);
 height:100vh;
-
 display:flex;
-
 justify-content:center;
-
 align-items:center;
-
 overflow:hidden;
-
 color:white;
-
 }
 
 .container{
-
 text-align:center;
-
 animation:fade 1.4s;
-
 }
 
 h1{
@@ -54,94 +41,59 @@ letter-spacing:2px;
 animation:titleFloat 5s ease-in-out infinite;
 }
 
-  @keyframes titleFloat{
-
-0%{
-transform:translateY(0px);
-}
-
-50%{
-transform:translateY(-8px);
-}
-
-100%{
-transform:translateY(0px);
-}
-
-  }
-
 .subtitle{
-
 font-size:20px;
-
 color:#cccccc;
-
 margin-bottom:60px;
+}
 
-}.start-btn{
-
+.start-btn{
 display:inline-block;
-
 background:#5e1023;
-
 color:white;
-
 padding:18px 55px;
-
 font-size:22px;
-
 border-radius:50px;
-
 text-decoration:none;
-
+cursor:pointer;
 transition:.35s;
-
 }
 
 .start-btn:hover{
-
 background:#8a1a35;
-
 transform:scale(1.05);
-
 }
 
-
-
 .footer{
-
 position:absolute;
-
 bottom:25px;
-
 width:100%;
-
 text-align:center;
-
 font-size:14px;
-
 opacity:.45;
-
 }
 
 @keyframes fade{
-
 from{
-
 opacity:0;
-
 transform:translateY(40px);
-
 }
-
 to{
-
 opacity:1;
-
 transform:translateY(0);
-
+}
 }
 
+@keyframes titleFloat{
+0%{
+transform:translateY(0);
+}
+50%{
+transform:translateY(-8px);
+}
+100%{
+transform:translateY(0);
+}
 }
 
 </style>
@@ -165,9 +117,7 @@ transform:translateY(0);
 </div>
 
 <div class="footer">
-
 © Amsiyat Monday
-
 </div>
 
 </body>
