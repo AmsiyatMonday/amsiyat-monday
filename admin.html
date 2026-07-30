@@ -1,96 +1,1004 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>لوحة التحكم | أمسية الاثنين</title>
-
-<link rel="stylesheet" href="css/style.css">
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>لوحة المؤلفة | أمسية الاثنين</title>
 <style>
+  :root{
+    --bg:#090909;
+    --panel:#121212;
+    --panel-2:#171717;
+    --line:#2a2a2a;
+    --text:#f6f4ef;
+    --muted:#b6b0a8;
+    --gold:#d4b06a;
+    --red:#7c2037;
+    --red-2:#a52a4d;
+    --shadow:0 20px 50px rgba(0,0,0,.35);
+    --radius:22px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Cairo",system-ui,-apple-system,Segoe UI,Tahoma,sans-serif;
+    background:
+      radial-gradient(circle at top, rgba(212,176,106,.08), transparent 28%),
+      linear-gradient(180deg, #070707, #0f0b12 45%, #070707);
+    color:var(--text);
+    min-height:100vh;
+  }
+  a{color:inherit;text-decoration:none}
+  button,input,textarea,select{
+    font:inherit;
+  }
 
-.admin{
-max-width:900px;
-margin:60px auto;
-padding:30px;
-background:#171717;
-border-radius:20px;
-}
+  .shell{
+    width:min(1400px, calc(100% - 24px));
+    margin:16px auto 28px;
+  }
 
-.admin h1{
-color:#d4b06a;
-margin-bottom:25px;
-}
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:16px 18px;
+    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:calc(var(--radius) + 4px);
+    box-shadow:var(--shadow);
+    backdrop-filter: blur(12px);
+  }
+  .brand{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .brand .kicker{
+    font-size:.8rem;
+    letter-spacing:.16em;
+    color:var(--gold);
+    text-transform:uppercase;
+  }
+  .brand h1{
+    margin:0;
+    font-size:clamp(1.35rem, 2vw, 2rem);
+    line-height:1.2;
+  }
+  .brand p{
+    margin:0;
+    color:var(--muted);
+    font-size:.95rem;
+  }
+  .top-actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .chip-btn{
+    border:none;
+    border-radius:999px;
+    padding:10px 14px;
+    cursor:pointer;
+    background:rgba(255,255,255,.05);
+    color:var(--text);
+    border:1px solid rgba(255,255,255,.08);
+    transition:.2s ease;
+  }
+  .chip-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.08)}
+  .chip-btn.primary{
+    background:linear-gradient(90deg, var(--red), var(--red-2));
+    border-color:transparent;
+  }
 
-label{
-display:block;
-margin-top:20px;
-margin-bottom:8px;
-font-size:18px;
-}
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:12px;
+    margin-top:14px;
+  }
+  .stat{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:20px;
+    padding:16px;
+    box-shadow:var(--shadow);
+  }
+  .stat .label{color:var(--muted);font-size:.92rem}
+  .stat .value{font-size:1.6rem;font-weight:700;margin-top:4px;color:var(--gold)}
 
-input,textarea{
-width:100%;
-padding:12px;
-background:#0f0f0f;
-border:1px solid #333;
-color:white;
-border-radius:10px;
-font-family:Cairo;
-}
+  .grid{
+    display:grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap:14px;
+    margin-top:14px;
+  }
 
-textarea{
-height:180px;
-resize:vertical;
-}
+  .card{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .card-hd{
+    padding:16px 18px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .card-hd h2{
+    margin:0;
+    font-size:1.05rem;
+  }
+  .card-hd span{
+    color:var(--muted);
+    font-size:.9rem;
+  }
+  .card-bd{padding:18px}
 
-button{
-margin-top:25px;
-padding:15px 30px;
-border:none;
-border-radius:10px;
-background:#65152b;
-color:white;
-font-size:18px;
-cursor:pointer;
-}
+  .form{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .field.full{grid-column:1 / -1}
+  .field label{
+    color:var(--muted);
+    font-size:.95rem;
+  }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field textarea,
+  .field select{
+    width:100%;
+    border:none;
+    outline:none;
+    color:var(--text);
+    background:var(--panel);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;
+    padding:14px 14px;
+    transition:.2s ease;
+  }
+  .field textarea{
+    min-height:130px;
+    resize:vertical;
+  }
+  .field input:focus,
+  .field textarea:focus,
+  .field select:focus{
+    border-color:rgba(212,176,106,.55);
+    box-shadow:0 0 0 4px rgba(212,176,106,.08);
+  }
 
-button:hover{
-background:#8c1c3b;
-}
+  .upload-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .drop{
+    border:1px dashed rgba(212,176,106,.35);
+    background:linear-gradient(180deg, rgba(212,176,106,.05), rgba(255,255,255,.02));
+    border-radius:18px;
+    padding:16px;
+    min-height:150px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    justify-content:space-between;
+  }
+  .drop h3{
+    margin:0;
+    font-size:1rem;
+    color:var(--gold);
+  }
+  .drop p{
+    margin:0;
+    color:var(--muted);
+    font-size:.92rem;
+    line-height:1.8;
+  }
+  .drop input{
+    display:none;
+  }
+  .file-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:none;
+    border-radius:14px;
+    padding:12px 14px;
+    background:rgba(255,255,255,.07);
+    color:var(--text);
+    cursor:pointer;
+    transition:.2s ease;
+  }
+  .file-btn:hover{background:rgba(255,255,255,.11)}
+  .file-name{
+    color:var(--muted);
+    font-size:.9rem;
+    word-break:break-word;
+  }
 
+  .actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:16px;
+  }
+  .action-btn{
+    border:none;
+    border-radius:16px;
+    padding:13px 16px;
+    cursor:pointer;
+    color:var(--text);
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    transition:.2s ease;
+  }
+  .action-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.1)}
+  .action-btn.primary{
+    background:linear-gradient(90deg, var(--red), var(--red-2));
+    border-color:transparent;
+  }
+  .action-btn.gold{
+    background:linear-gradient(90deg, #8f6a2e, var(--gold));
+    color:#111;
+    border-color:transparent;
+    font-weight:700;
+  }
+  .action-btn.danger{
+    background:linear-gradient(90deg, #4d1422, #7c2037);
+    border-color:transparent;
+  }
+
+  .preview-wrap{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .preview-card{
+    background:var(--panel-2);
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,.06);
+    overflow:hidden;
+  }
+  .preview-cover{
+    aspect-ratio: 4 / 5;
+    background:
+      radial-gradient(circle at top, rgba(255,255,255,.1), transparent 38%),
+      linear-gradient(180deg, #1b1520, #0f0f0f);
+    display:flex;
+    align-items:flex-end;
+    justify-content:flex-start;
+    padding:18px;
+    position:relative;
+  }
+  .preview-cover img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:none;
+  }
+  .preview-cover .cover-fallback{
+    position:relative;
+    z-index:1;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .preview-cover .cover-fallback .title{
+    font-size:1.5rem;
+    font-weight:700;
+    color:var(--gold);
+  }
+  .preview-cover .cover-fallback .meta{
+    color:#f0ece3;
+    opacity:.9;
+  }
+  .preview-info{
+    padding:16px 18px;
+    display:grid;
+    gap:10px;
+  }
+  .info-line{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    color:var(--muted);
+    font-size:.95rem;
+  }
+  .info-line strong{
+    color:var(--text);
+    font-weight:600;
+  }
+
+  .pdf-frame{
+    width:100%;
+    height:420px;
+    border:0;
+    background:#111;
+  }
+
+  .chapters{
+    margin-top:14px;
+  }
+  .chapter-grid{
+    display:grid;
+    gap:12px;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .chapter-item{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:18px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .chapter-item .top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    align-items:flex-start;
+  }
+  .chapter-item h3{
+    margin:0;
+    font-size:1.02rem;
+  }
+  .chapter-item p{
+    margin:0;
+    color:var(--muted);
+    font-size:.92rem;
+    line-height:1.75;
+  }
+  .chapter-item .actions-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:2px;
+  }
+  .mini{
+    border:none;
+    border-radius:12px;
+    padding:9px 12px;
+    cursor:pointer;
+    background:rgba(255,255,255,.07);
+    color:var(--text);
+  }
+
+  .empty{
+    color:var(--muted);
+    padding:16px;
+    text-align:center;
+    border:1px dashed rgba(255,255,255,.12);
+    border-radius:18px;
+  }
+
+  .modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.78);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+    z-index:50;
+  }
+  .modal.open{display:flex}
+  .modal-box{
+    width:min(1100px, 100%);
+    max-height:92vh;
+    overflow:auto;
+    background:#0f0f0f;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:24px;
+    box-shadow:var(--shadow);
+  }
+  .modal-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:16px 18px;
+    border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .modal-head h2{margin:0;font-size:1.05rem}
+  .modal-body{
+    padding:18px;
+    display:grid;
+    grid-template-columns: .85fr 1.15fr;
+    gap:14px;
+  }
+  .book-skin{
+    border-radius:20px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.06);
+    background:#151515;
+  }
+  .book-page{
+    min-height:70vh;
+    padding:20px;
+    background:
+      linear-gradient(90deg, rgba(255,255,255,.02), transparent 12%),
+      #f6f0e6;
+    color:#161616;
+  }
+  .book-page .book-title{
+    color:#7a1e34;
+    font-size:1.5rem;
+    font-weight:700;
+    margin:0 0 12px;
+  }
+  .book-page .book-sub{
+    color:#6f665d;
+    margin:0 0 18px;
+  }
+  .book-page .book-text{
+    white-space:pre-wrap;
+    line-height:2;
+    font-size:1.06rem;
+  }
+  .book-page .book-meta{
+    margin-top:18px;
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    color:#6f665d;
+    font-size:.92rem;
+    border-top:1px solid rgba(0,0,0,.08);
+    padding-top:14px;
+  }
+
+  .hint{
+    color:var(--muted);
+    font-size:.92rem;
+    line-height:1.8;
+  }
+
+  @media (max-width: 1080px){
+    .grid,.modal-body{grid-template-columns:1fr}
+    .chapter-grid{grid-template-columns:1fr}
+    .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media (max-width: 720px){
+    .shell{width:min(100% - 14px, 100%)}
+    .topbar{padding:14px}
+    .form,.upload-row{grid-template-columns:1fr}
+    .stats{grid-template-columns:1fr}
+    .topbar{flex-direction:column;align-items:stretch}
+    .top-actions{justify-content:flex-start}
+    .pdf-frame{height:320px}
+    .book-page{min-height:auto}
+  }
 </style>
-
 </head>
-
 <body>
+  <div class="shell">
+    <section class="topbar">
+      <div class="brand">
+        <div class="kicker">Amsiyat Monday</div>
+        <h1>لوحة المؤلفة</h1>
+        <p>إدارة الفصول، المعاينة، وتجهيز النشر من الجوال</p>
+      </div>
+      <div class="top-actions">
+        <button class="chip-btn" id="btnClearAll">تفريغ الحقول</button>
+        <button class="chip-btn primary" id="btnNewPreview">معاينة الفصل</button>
+      </div>
+    </section>
 
-<div class="admin">
+    <section class="stats">
+      <div class="stat"><div class="label">عدد الفصول</div><div class="value" id="statChapters">0</div></div>
+      <div class="stat"><div class="label">آخر فصل محفوظ</div><div class="value" id="statLast">—</div></div>
+      <div class="stat"><div class="label">الحالة الحالية</div><div class="value" id="statStatus">مسودة</div></div>
+      <div class="stat"><div class="label">الملف المختار</div><div class="value" id="statFile">لا يوجد</div></div>
+    </section>
 
-<h1>لوحة المؤلف</h1>
+    <section class="grid">
+      <div class="card">
+        <div class="card-hd">
+          <h2>بيانات الفصل</h2>
+          <span>املئي الحقول ثم احفظي النسخة المحلية أو افتحي المعاينة</span>
+        </div>
+        <div class="card-bd">
+          <div class="form">
+            <div class="field">
+              <label for="title">عنوان الفصل</label>
+              <input id="title" type="text" placeholder="مثال: الفصل الأول: ليلة الاثنين">
+            </div>
 
-<label>عنوان الفصل</label>
+            <div class="field">
+              <label for="number">رقم الفصل</label>
+              <input id="number" type="number" placeholder="1" min="1">
+            </div>
 
-<input id="title" type="text">
+            <div class="field full">
+              <label for="description">وصف مختصر</label>
+              <textarea id="description" placeholder="اكتبي وصفًا قصيرًا للفصل يظهر في المعاينة وقائمة الفصول..."></textarea>
+            </div>
 
-<label>رقم الفصل</label>
+            <div class="field">
+              <label for="status">الحالة</label>
+              <select id="status">
+                <option value="draft">مسودة</option>
+                <option value="published">منشور</option>
+              </select>
+            </div>
 
-<input id="chapter" type="number">
+            <div class="field">
+              <label for="tag">وسم الفصل</label>
+              <input id="tag" type="text" placeholder="مثال: فصل غامض">
+            </div>
+          </div>
 
-<label>رفع ملف PDF</label>
+          <div class="upload-row" style="margin-top:14px;">
+            <div class="drop">
+              <h3>صورة الغلاف</h3>
+              <p>اختاري صورة مناسبة للفصل. ستظهر في المعاينة وفي بطاقة الفصل.</p>
+              <label class="file-btn" for="cover">اختيار صورة</label>
+              <input id="cover" type="file" accept="image/*">
+              <div class="file-name" id="coverName">لا توجد صورة مختارة</div>
+            </div>
 
-<input id="pdf" type="file" accept=".pdf">
+            <div class="drop">
+              <h3>ملف PDF</h3>
+              <p>ارفعي ملف PDF أفقيًا. ستظهرين معاينته في الجهة اليمنى فورًا.</p>
+              <label class="file-btn" for="pdf">اختيار PDF</label>
+              <input id="pdf" type="file" accept="application/pdf">
+              <div class="file-name" id="pdfName">لا يوجد ملف مختار</div>
+            </div>
+          </div>
 
-  <button id="preview">
-معاينة الفصل
-  </button>
+          <div class="actions">
+            <button class="action-btn primary" id="btnPreview">معاينة</button>
+            <button class="action-btn gold" id="btnSave">حفظ محلي</button>
+            <button class="action-btn danger" id="btnPublish">نشر محلي</button>
+          </div>
 
-</div>
+          <p class="hint" style="margin-top:14px;">
+            هذه النسخة تحفظ الفصول داخل المتصفح مؤقتًا لتجهيز الهيكل. بعد ذلك نربط زر النشر بالـ Worker حتى يصبح الرفع من الجوال مباشرًا.
+          </p>
+        </div>
+      </div>
 
-<script src="js/admin.js"></script>
+      <div class="card">
+        <div class="card-hd">
+          <h2>المعاينة الحية</h2>
+          <span>الغلاف + معلومات الفصل + عرض الـ PDF</span>
+        </div>
+        <div class="card-bd preview-wrap">
+          <div class="preview-card">
+            <div class="preview-cover">
+              <img id="coverPreview" alt="معاينة الغلاف">
+              <div class="cover-fallback">
+                <div class="title" id="previewTitle">أمسية الاثنين</div>
+                <div class="meta" id="previewMeta">اكتبي بيانات الفصل لترينها هنا مباشرة</div>
+              </div>
+            </div>
+            <div class="preview-info">
+              <div class="info-line"><span>العنوان</span><strong id="infoTitle">—</strong></div>
+              <div class="info-line"><span>الرقم</span><strong id="infoNumber">—</strong></div>
+              <div class="info-line"><span>الحالة</span><strong id="infoStatus">مسودة</strong></div>
+              <div class="info-line"><span>الوسم</span><strong id="infoTag">—</strong></div>
+            </div>
+          </div>
 
+          <div class="preview-card">
+            <iframe id="pdfFrame" class="pdf-frame" title="PDF Preview"></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card chapters">
+      <div class="card-hd">
+        <h2>الفصول المحفوظة محليًا</h2>
+        <span>تعديل / حذف / تحميل من جديد</span>
+      </div>
+      <div class="card-bd">
+        <div class="chapter-grid" id="chapterList">
+          <div class="empty">لا توجد فصول محفوظة بعد.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal" id="previewModal" aria-hidden="true">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2>معاينة الفصل</h2>
+        <div class="top-actions">
+          <button class="chip-btn" id="btnCloseModal">إغلاق</button>
+          <button class="chip-btn primary" id="btnSaveFromPreview">حفظ من المعاينة</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="book-skin">
+          <div class="preview-cover" style="min-height:280px;">
+            <img id="modalCover" alt="غلاف المعاينة">
+            <div class="cover-fallback">
+              <div class="title" id="modalTitle">—</div>
+              <div class="meta" id="modalMeta">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="book-skin">
+          <div class="book-page">
+            <h3 class="book-title" id="modalChapterTitle">—</h3>
+            <p class="book-sub" id="modalChapterSub">—</p>
+            <div class="book-text" id="modalChapterDesc">—</div>
+            <div class="book-meta">
+              <span id="modalChapterNum">—</span>
+              <span id="modalChapterTag">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const STORAGE_KEY = "amsiyat_local_chapters_v1";
+  const COVER_URL_KEY = "amsiyat_cover_url";
+  const PDF_URL_KEY = "amsiyat_pdf_url";
+
+  const el = (id) => document.getElementById(id);
+
+  const state = {
+    editingId: null,
+    coverUrl: "",
+    pdfUrl: "",
+    coverName: "",
+    pdfName: "",
+    chapters: loadChapters(),
+  };
+
+  const fields = {
+    title: el("title"),
+    number: el("number"),
+    description: el("description"),
+    status: el("status"),
+    tag: el("tag"),
+    cover: el("cover"),
+    pdf: el("pdf"),
+  };
+
+  const ui = {
+    statChapters: el("statChapters"),
+    statLast: el("statLast"),
+    statStatus: el("statStatus"),
+    statFile: el("statFile"),
+
+    coverName: el("coverName"),
+    pdfName: el("pdfName"),
+
+    previewTitle: el("previewTitle"),
+    previewMeta: el("previewMeta"),
+    infoTitle: el("infoTitle"),
+    infoNumber: el("infoNumber"),
+    infoStatus: el("infoStatus"),
+    infoTag: el("infoTag"),
+    coverPreview: el("coverPreview"),
+    pdfFrame: el("pdfFrame"),
+
+    chapterList: el("chapterList"),
+
+    previewModal: el("previewModal"),
+    modalTitle: el("modalTitle"),
+    modalMeta: el("modalMeta"),
+    modalCover: el("modalCover"),
+    modalChapterTitle: el("modalChapterTitle"),
+    modalChapterSub: el("modalChapterSub"),
+    modalChapterDesc: el("modalChapterDesc"),
+    modalChapterNum: el("modalChapterNum"),
+    modalChapterTag: el("modalChapterTag"),
+  };
+
+  function loadChapters() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveChapters() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state.chapters));
+    renderList();
+    updateStats();
+  }
+
+  function statusLabel(v) {
+    return v === "published" ? "منشور" : "مسودة";
+  }
+
+  function clearFiles() {
+    if (state.coverUrl) URL.revokeObjectURL(state.coverUrl);
+    if (state.pdfUrl) URL.revokeObjectURL(state.pdfUrl);
+    state.coverUrl = "";
+    state.pdfUrl = "";
+    state.coverName = "";
+    state.pdfName = "";
+    fields.cover.value = "";
+    fields.pdf.value = "";
+    ui.coverName.textContent = "لا توجد صورة مختارة";
+    ui.pdfName.textContent = "لا يوجد ملف مختار";
+    ui.coverPreview.removeAttribute("src");
+    ui.coverPreview.style.display = "none";
+    ui.pdfFrame.removeAttribute("src");
+    localStorage.removeItem(COVER_URL_KEY);
+    localStorage.removeItem(PDF_URL_KEY);
+  }
+
+  function readForm() {
+    return {
+      id: state.editingId || crypto.randomUUID(),
+      title: fields.title.value.trim(),
+      number: fields.number.value.trim(),
+      description: fields.description.value.trim(),
+      status: fields.status.value,
+      tag: fields.tag.value.trim(),
+      coverName: state.coverName || "",
+      pdfName: state.pdfName || "",
+      updatedAt: new Date().toISOString(),
+    };
+  }
+
+  function fillPreview() {
+    const title = fields.title.value.trim() || "أمسية الاثنين";
+    const number = fields.number.value.trim() || "—";
+    const description = fields.description.value.trim() || "اكتبي بيانات الفصل لترينها هنا مباشرة";
+    const status = statusLabel(fields.status.value);
+    const tag = fields.tag.value.trim() || "—";
+
+    ui.previewTitle.textContent = title;
+    ui.previewMeta.textContent = description;
+    ui.infoTitle.textContent = title;
+    ui.infoNumber.textContent = number;
+    ui.infoStatus.textContent = status;
+    ui.infoTag.textContent = tag;
+
+    ui.modalTitle.textContent = title;
+    ui.modalMeta.textContent = `${status} • الفصل ${number}`;
+    ui.modalChapterTitle.textContent = title;
+    ui.modalChapterSub.textContent = fields.description.value.trim() || "لا يوجد وصف بعد";
+    ui.modalChapterDesc.textContent = description;
+    ui.modalChapterNum.textContent = `رقم الفصل: ${number}`;
+    ui.modalChapterTag.textContent = tag === "—" ? "لا يوجد وسم" : `الوسم: ${tag}`;
+    ui.statStatus.textContent = status;
+  }
+
+  function updateStats() {
+    ui.statChapters.textContent = state.chapters.length;
+    const last = state.chapters[state.chapters.length - 1];
+    ui.statLast.textContent = last ? `${last.number || "?"} - ${last.title}` : "—";
+    ui.statFile.textContent = state.pdfName || "لا يوجد";
+  }
+
+  function renderList() {
+    if (!state.chapters.length) {
+      ui.chapterList.innerHTML = `<div class="empty">لا توجد فصول محفوظة بعد.</div>`;
+      return;
+    }
+
+    ui.chapterList.innerHTML = state.chapters
+      .slice()
+      .sort((a,b) => Number(a.number) - Number(b.number))
+      .map(ch => `
+        <article class="chapter-item">
+          <div class="top">
+            <div>
+              <h3>${escapeHtml(ch.number ? `الفصل ${ch.number}` : "فصل بدون رقم")} — ${escapeHtml(ch.title)}</h3>
+              <p>${escapeHtml(ch.description || "لا يوجد وصف")}</p>
+            </div>
+            <span style="color:var(--gold);font-weight:700;">${statusLabel(ch.status)}</span>
+          </div>
+          <div class="actions-row">
+            <button class="mini" data-edit="${ch.id}">تعديل</button>
+            <button class="mini" data-preview="${ch.id}">معاينة</button>
+            <button class="mini" data-delete="${ch.id}">حذف</button>
+          </div>
+        </article>
+      `).join("");
+
+    ui.chapterList.querySelectorAll("[data-edit]").forEach(btn => {
+      btn.addEventListener("click", () => editChapter(btn.dataset.edit));
+    });
+    ui.chapterList.querySelectorAll("[data-preview]").forEach(btn => {
+      btn.addEventListener("click", () => previewChapter(btn.dataset.preview));
+    });
+    ui.chapterList.querySelectorAll("[data-delete]").forEach(btn => {
+      btn.addEventListener("click", () => deleteChapter(btn.dataset.delete));
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#39;");
+  }
+
+  function syncCoverPreview(file) {
+    if (!file) return;
+    if (state.coverUrl) URL.revokeObjectURL(state.coverUrl);
+    state.coverUrl = URL.createObjectURL(file);
+    ui.coverPreview.src = state.coverUrl;
+    ui.coverPreview.style.display = "block";
+    ui.modalCover.src = state.coverUrl;
+    localStorage.setItem(COVER_URL_KEY, state.coverUrl);
+  }
+
+  function syncPdfPreview(file) {
+    if (!file) return;
+    if (state.pdfUrl) URL.revokeObjectURL(state.pdfUrl);
+    state.pdfUrl = URL.createObjectURL(file);
+    ui.pdfFrame.src = state.pdfUrl;
+    localStorage.setItem(PDF_URL_KEY, state.pdfUrl);
+  }
+
+  function loadIntoForm(ch) {
+    state.editingId = ch.id;
+    fields.title.value = ch.title || "";
+    fields.number.value = ch.number || "";
+    fields.description.value = ch.description || "";
+    fields.status.value = ch.status || "draft";
+    fields.tag.value = ch.tag || "";
+
+    state.coverName = ch.coverName || "";
+    state.pdfName = ch.pdfName || "";
+    ui.coverName.textContent = state.coverName || "لا توجد صورة مختارة";
+    ui.pdfName.textContent = state.pdfName || "لا يوجد ملف مختار";
+
+    fillPreview();
+    updateStats();
+  }
+
+  function resetForm() {
+    state.editingId = null;
+    fields.title.value = "";
+    fields.number.value = "";
+    fields.description.value = "";
+    fields.status.value = "draft";
+    fields.tag.value = "";
+    clearFiles();
+    fillPreview();
+  }
+
+  function saveCurrent() {
+    const item = readForm();
+    if (!item.title) return alert("اكتبي عنوان الفصل");
+    if (!item.number) return alert("اكتبي رقم الفصل");
+    if (!state.pdfName) return alert("اختاري ملف PDF");
+    if (state.editingId) {
+      const index = state.chapters.findIndex(x => x.id === state.editingId);
+      if (index !== -1) state.chapters[index] = { ...state.chapters[index], ...item };
+    } else {
+      state.chapters.push(item);
+      state.editingId = item.id;
+    }
+    saveChapters();
+    alert("تم الحفظ محليًا");
+  }
+
+  function previewSave() {
+    const item = readForm();
+    if (!item.title) return alert("اكتبي عنوان الفصل");
+    if (!item.number) return alert("اكتبي رقم الفصل");
+    if (!state.pdfName) return alert("اختاري ملف PDF");
+    fillPreview();
+    ui.previewModal.classList.add("open");
+    ui.previewModal.setAttribute("aria-hidden", "false");
+  }
+
+  function previewChapter(id) {
+    const ch = state.chapters.find(x => x.id === id);
+    if (!ch) return;
+    fields.title.value = ch.title || "";
+    fields.number.value = ch.number || "";
+    fields.description.value = ch.description || "";
+    fields.status.value = ch.status || "draft";
+    fields.tag.value = ch.tag || "";
+    state.coverName = ch.coverName || "";
+    state.pdfName = ch.pdfName || "";
+    ui.coverName.textContent = state.coverName || "لا توجد صورة مختارة";
+    ui.pdfName.textContent = state.pdfName || "لا يوجد ملف مختار";
+    fillPreview();
+    ui.previewModal.classList.add("open");
+    ui.previewModal.setAttribute("aria-hidden", "false");
+  }
+
+  function editChapter(id) {
+    const ch = state.chapters.find(x => x.id === id);
+    if (!ch) return;
+    loadIntoForm(ch);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function deleteChapter(id) {
+    const ch = state.chapters.find(x => x.id === id);
+    if (!ch) return;
+    if (!confirm(`حذف ${ch.title}؟`)) return;
+    state.chapters = state.chapters.filter(x => x.id !== id);
+    if (state.editingId === id) resetForm();
+    saveChapters();
+  }
+
+  // Events
+  ["input","change"].forEach(evt => {
+    Object.values(fields).forEach(field => {
+      field.addEventListener(evt, () => {
+        if (field === fields.cover || field === fields.pdf) return;
+        fillPreview();
+      });
+    });
+  });
+
+  fields.cover.addEventListener("change", () => {
+    const file = fields.cover.files?.[0];
+    if (!file) return;
+    state.coverName = file.name;
+    ui.coverName.textContent = file.name;
+    syncCoverPreview(file);
+    fillPreview();
+  });
+
+  fields.pdf.addEventListener("change", () => {
+    const file = fields.pdf.files?.[0];
+    if (!file) return;
+    state.pdfName = file.name;
+    ui.pdfName.textContent = file.name;
+    syncPdfPreview(file);
+    fillPreview();
+  });
+
+  el("btnSave").addEventListener("click", saveCurrent);
+  el("btnPublish").addEventListener("click", saveCurrent);
+  el("btnPreview").addEventListener("click", previewSave);
+  el("btnNewPreview").addEventListener("click", previewSave);
+  el("btnCloseModal").addEventListener("click", () => {
+    ui.previewModal.classList.remove("open");
+    ui.previewModal.setAttribute("aria-hidden", "true");
+  });
+  el("btnSaveFromPreview").addEventListener("click", () => {
+    saveCurrent();
+    ui.previewModal.classList.remove("open");
+    ui.previewModal.setAttribute("aria-hidden", "true");
+  });
+  el("btnClearAll").addEventListener("click", () => {
+    if (!confirm("تفريغ الحقول الحالية؟")) return;
+    resetForm();
+  });
+  ui.previewModal.addEventListener("click", (e) => {
+    if (e.target === ui.previewModal) {
+      ui.previewModal.classList.remove("open");
+      ui.previewModal.setAttribute("aria-hidden", "true");
+    }
+  });
+
+  // Init
+  renderList();
+  updateStats();
+  fillPreview();
+})();
+</script>
 </body>
-
-</html>
+              </html>
