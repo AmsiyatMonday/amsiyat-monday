@@ -47,16 +47,28 @@ animation:fade 1.4s;
 }
 
 h1{
-
 font-size:58px;
-
 color:#d7b15c;
-
 margin-bottom:15px;
-
 letter-spacing:2px;
-
+animation:titleFloat 5s ease-in-out infinite;
 }
+
+  @keyframes titleFloat{
+
+0%{
+transform:translateY(0px);
+}
+
+50%{
+transform:translateY(-8px);
+}
+
+100%{
+transform:translateY(0px);
+}
+
+  }
 
 .subtitle{
 
@@ -146,11 +158,11 @@ transform:translateY(0);
 
 رواية غموض وتحقيق
 
-</div>
-
-<a href="reader.html" class="start-btn">ابدأ القراءة</a>
+</div <a href="reader.html" class="start-btn">
 ابدأ القراءة
+</a>
 
+<
 </button>
 
 </div>
